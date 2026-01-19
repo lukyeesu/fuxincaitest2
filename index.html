@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ฟู่ ซิน ไฉ คลินิกแพทย์แผนจีน - ระบบบริหารจัดการ</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* ซ่อน Scrollbar ของหน้าหลัก */
+            background-color: #f0f2f5;
+        }
+        iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+    <script>
+        // ฟังก์ชันรอรับข้อความจาก Iframe (GAS) เพื่อเปลี่ยน Title หรือ Logout
+        window.addEventListener('message', function(e) {
+            // ตรวจสอบว่ามีข้อมูลส่งมาหรือไม่
+            var data = e.data || {};
+
+            // 1. เปลี่ยน Title
+            if (data.type === 'setTitle' && data.title) {
+                document.title = data.title;
+            }
+            
+            // 2. สั่ง Logout
+            if (data.type === 'logout') {
+                var iframe = document.querySelector('iframe');
+                if (iframe) {
+                    console.log("Logout command received. Reloading iframe...");
+                    // ดึง URL เดิมมาตัด Parameter ออก
+                    var currentSrc = iframe.src;
+                    var baseUrl = currentSrc.split('?')[0];
+                    
+                    // บังคับโหลดใหม่ไปหน้า login พร้อม timestamp ป้องกัน Cache
+                    var newUrl = baseUrl + '?page=login&t=' + new Date().getTime();
+                    
+                    // สั่งเปลี่ยน URL
+                    iframe.src = newUrl;
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- 
+      ใส่ URL Web App ของ GAS ที่คุณระบุมา
+    -->
+    <iframe src="https://script.google.com/macros/s/AKfycbxgNDuyF-D14_G5-mDTza6anvi377cCinhzOlZUC-Xk0t9q167PLWO9djSMXrakui95/exec" allow="geolocation; microphone; camera"></iframe>
+</body>
+</html>
